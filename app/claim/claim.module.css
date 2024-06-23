@@ -1,0 +1,33 @@
+/* src/app/claim/claim.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .claimButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .venueList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .venueItem {
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin: 5px 0;
+    border-radius: 5px;
+  }
+  
