@@ -1,5 +1,4 @@
 import axios from 'axios';
-const properties = require("../../../properties.json");
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
 

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { message } from "antd";
-import { loginUser } from "./useUserAuth";
 
-interface FetchClaimsRequest {
+export interface FetchClaimsRequest {
+  cursor?: string | null;
   limit: number;
 }
 
@@ -66,23 +66,11 @@ export interface Claim {
 
 export interface ClaimResponse {
   rows: Claim[];
+  cursor: string | null;
 }
 
-const loginCredentials = {
-  uid: "Shu",
-  pwd: "Hello@123",
-};
-
-export const fetchClaims = async (): Promise<ClaimResponse> => {
-  const requestData: FetchClaimsRequest = {
-    limit: 5,
-  };
-
+export const fetchClaims = async (requestData: FetchClaimsRequest): Promise<ClaimResponse> => {
   try {
-    // await loginUser(loginCredentials);
-    // console.log(await loginUser(loginCredentials));
-    // console.log(requestData);
-    // console.log(process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims");
     const response = await axios.post<ClaimResponse>(
       process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims",
       requestData,
@@ -98,15 +86,12 @@ export const fetchClaims = async (): Promise<ClaimResponse> => {
   }
 };
 
-export const claimAccept = async (claimId: string) => {
+export const claimAccept = async (venuClaimId: string) => {
   try {
-    await axios.post(
-      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_claim_accept",
-      { claim_id: claimId },
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claim_accept",
+      { venue_claim_id: venuClaimId },
       {
-        headers: {
-          Cookie: "your_cookie_name=your_cookie_value",
-        },
         withCredentials: true,
       }
     );
@@ -120,16 +105,15 @@ export const claimAccept = async (claimId: string) => {
 
 export const claimReject = async (claimId: string) => {
   try {
-    await axios.post(
-      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_claim_reject",
-      { claim_id: claimId },
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claim_reject",
+      { venue_claim_id: claimId },
       {
-        headers: {
-          Cookie: "your_cookie_name=your_cookie_value",
-        },
         withCredentials: true,
       }
     );
+    console.log("Response");
+    console.log(response.data);
     message.success("Claim rejected successfully");
   } catch (error) {
     console.error("Claim reject request failed:", error);
