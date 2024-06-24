@@ -66,16 +66,24 @@ export interface Claim {
 
 export interface ClaimResponse {
   rows: Claim[];
-  cursor: string | null;
+  cursor?: {
+    l?: string;
+  };
 }
 
-export const fetchClaims = async (requestData: FetchClaimsRequest): Promise<ClaimResponse> => {
+export const fetchClaims = async (
+  extension: string,
+  requestData: string // Change to string to accommodate JSON.stringify
+): Promise<ClaimResponse> => {
   try {
     const response = await axios.post<ClaimResponse>(
-      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims",
-      requestData,
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims" + extension,
+      requestData, // Send the JSON stringified requestData
       {
         withCredentials: true, // This ensures cookies are sent with the request
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+        },
       }
     );
     console.log(response.data);
@@ -93,6 +101,9 @@ export const claimAccept = async (venuClaimId: string) => {
       { venue_claim_id: venuClaimId },
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
     message.success("Claim accepted successfully");
@@ -110,6 +121,9 @@ export const claimReject = async (claimId: string) => {
       { venue_claim_id: claimId },
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
     console.log("Response");
