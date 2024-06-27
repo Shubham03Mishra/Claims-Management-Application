@@ -1,0 +1,79 @@
+/* claim.module.css */
+
+.container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.card {
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details {
+  flex-grow: 1;
+}
+
+.actions {
+  margin-left: 20px;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Add alternating row colors */
+.ant-list-item:nth-child(odd) .card {
+  background-color: #ffffff;
+}
+
+.ant-list-item:nth-child(even) .card {
+  background-color: #f0f2f5;
+}
+
+/* Button styling */
+.actions button {
+  margin-left: 5px;
+}
+
+.actions .ant-btn-primary {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+.actions .ant-btn-danger {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+/* Modal styling */
+.ant-modal-content {
+  border-radius: 8px;
+}
+
+.ant-modal-header {
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.ant-modal-footer {
+  border-top: none;
+}
+
+.ant-modal-title {
+  font-weight: bold;
+}
+
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}

@@ -6,7 +6,7 @@ import {
   EyeInvisibleOutlined,
   EyeTwoTone,
 } from "@ant-design/icons";
-import styles from "./login.module.css";
+import styles from "../styles/login.module.css";
 import { loginUser } from "../utils/useUserAuth";
 
 const LoginPage: React.FC = () => {
@@ -17,7 +17,6 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await loginUser({ uid: values.userId, pwd: values.password });
-      console.log(response);
       if (response && response.status === 200) {
         message.success("Login successful!");
         router.push("/claim"); // Redirect to the dashboard or another page after successful login

@@ -66,19 +66,28 @@ export interface Claim {
 
 export interface ClaimResponse {
   rows: Claim[];
-  cursor: string | null;
+  cursor?: {
+    l?: string;
+  };
 }
 
-export const fetchClaims = async (requestData: FetchClaimsRequest): Promise<ClaimResponse> => {
+
+
+export const fetchClaims = async (
+  extension: string,
+  requestData: string // Change to string to accommodate JSON.stringify
+): Promise<ClaimResponse> => {
   try {
     const response = await axios.post<ClaimResponse>(
-      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims",
-      requestData,
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_claims" + extension,
+      requestData, // Send the JSON stringified requestData
       {
         withCredentials: true, // This ensures cookies are sent with the request
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+        },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("API request failed:", error);
@@ -93,9 +102,12 @@ export const claimAccept = async (venuClaimId: string) => {
       { venue_claim_id: venuClaimId },
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
-    message.success("Claim accepted successfully");
+    return response;
   } catch (error) {
     console.error("Claim accept request failed:", error);
     message.error("Failed to accept claim");
@@ -110,14 +122,63 @@ export const claimReject = async (claimId: string) => {
       { venue_claim_id: claimId },
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
-    console.log("Response");
-    console.log(response.data);
-    message.success("Claim rejected successfully");
+    return response;
   } catch (error) {
     console.error("Claim reject request failed:", error);
     message.error("Failed to reject claim");
     throw error;
   }
 };
+
+
+export const updateVenuOwner = async (venue) => {
+
+  const payload = {
+    venue_id: venue.venue_id,
+    name: venue.name,
+    category: venue.category,
+    category_description: venue.category_desc || "",
+    addr: {
+      rcpt: venue.addr.rcpt || "",
+      fl: venue.addr.fl || "",
+      sl: venue.addr.sl || "",
+      pc: venue.addr.pc || "",
+      cty: venue.addr.cty || "",
+      reg: venue.addr.reg || "",
+      ctry: venue.addr.ctry || "",
+    },
+    capacity: venue.capacity,
+    description: venue.description,
+    event_conf_req: venue.event_conf_req,
+    position: {
+      l: venue.position.l,
+      L: venue.position.L,
+    },
+    private: venue.private,
+  };
+
+  try {
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/venu_venue_update",
+      payload,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    message.success('Venue data sent successfully');
+    return response;
+  } catch (error) {
+    console.error('Failed to send venue data:', error);
+    message.error('Failed to send venue data');
+    throw error;
+  }
+};
+

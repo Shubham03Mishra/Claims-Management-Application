@@ -12,7 +12,7 @@ import {
   message,
 } from "antd";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import styles from "./reservation.module.css";
+import styles from "../styles/claim.module.css";
 import {
   fetchClaims,
   claimAccept,
@@ -20,14 +20,13 @@ import {
   ClaimResponse,
   Claim,
 } from "../utils/venueClaims";
+import { updateVenuOwner } from "../utils/venueClaims"; // Ensure you import the sendVenueData function
 
 const { Title, Text } = Typography;
 
 const ClaimManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [claimsCache, setClaimsCache] = useState<{ [key: number]: Claim[] }>(
-    {}
-  );
+  const [claimsCache, setClaimsCache] = useState<{ [key: number]: Claim[] }>({});
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +36,8 @@ const ClaimManagement: React.FC = () => {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const pageSize = 5;
+
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const loadClaims = async (page: number) => {
     if (loading) return;
@@ -70,8 +71,7 @@ const ClaimManagement: React.FC = () => {
         ...prevCache,
         [page]: newClaims,
       }));
-      const hasCursor =
-        data.cursor !== undefined && data.cursor.l !== undefined;
+      const hasCursor = data.cursor !== undefined && data.cursor.l !== undefined;
       setCursor(hasCursor ? data.cursor : null);
       setNextEnable(hasCursor);
       // Update totalItems based on nextEnable status
@@ -98,15 +98,20 @@ const ClaimManagement: React.FC = () => {
   const handleConfirm = async () => {
     if (confirmingId) {
       try {
-        await claimAccept(confirmingId);
-        setClaims((prev) =>
-          prev.map((claim) =>
-            claim.id === confirmingId
-              ? { ...claim, r: { ...claim.r, state: 2 } }
-              : claim
-          )
-        );
-        message.success("Claim accepted successfully");
+        const claim = claims.find((claim) => claim.id === confirmingId);
+        if (!claim) throw new Error("Claim not found");
+        const venue = claim.r.venue;
+        venue.event_conf_req = 1;
+        const response = await updateVenuOwner(venue);
+        if(Object.keys(response.data).length === 0){
+          const claimAcceptResponse = await claimAccept(confirmingId);
+
+          if(Object.keys(claimAcceptResponse.data).length === 0){
+            message.success("Claim accepted successfully");
+            await delay(10);
+            window.location.reload();
+          }
+        }
       } catch (error) {
         message.error("Failed to accept claim");
       } finally {
@@ -118,15 +123,22 @@ const ClaimManagement: React.FC = () => {
   const handleRejectConfirm = async () => {
     if (rejectingId) {
       try {
-        await claimReject(rejectingId);
-        setClaims((prev) =>
-          prev.map((claim) =>
-            claim.id === rejectingId
-              ? { ...claim, r: { ...claim.r, state: 3 } }
-              : claim
-          )
-        );
-        message.success("Claim rejected successfully");
+        const claim = claims.find((claim) => claim.id === rejectingId);
+        if (!claim) throw new Error("Claim not found");
+        console.log(rejectingId);
+        console.log(claim);
+        const venue = claim.r.venue;
+        venue.event_conf_req = 0;
+        const response = await updateVenuOwner(venue);
+        if(Object.keys(response.data).length === 0){
+          const claimRejectResponse = await claimReject(rejectingId);
+
+          if(Object.keys(claimRejectResponse.data).length === 0){
+            message.success("Claim rejected successfully");
+            await delay(10);
+            window.location.reload();
+          }
+        }
       } catch (error) {
         message.error("Failed to reject claim");
       } finally {
