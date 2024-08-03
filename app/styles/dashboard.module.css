@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .ant-tabs {
+    width: 100%;
+    max-width: 800px; 
+  }
+  

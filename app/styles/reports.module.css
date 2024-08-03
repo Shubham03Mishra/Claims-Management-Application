@@ -1,0 +1,8 @@
+.custom-row {
+    font-weight: bold; /* Make all fonts bold */
+  }
+  
+  .custom-row:hover {
+    color: #000000 !important; /* Keep the font color black on hover */
+  }
+  

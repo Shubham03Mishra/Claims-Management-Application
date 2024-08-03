@@ -1,0 +1,130 @@
+/* General container styling */
+.venues-container {
+    padding: 20px;
+    background-color: #f9fafb;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Table styling */
+  .ant-table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  
+  .ant-table-thead > tr > th {
+    background-color: #001529;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .ant-table-tbody > tr:nth-child(odd) {
+    background-color: #f1f5f9;
+  }
+  
+  /* Button styling */
+  .ant-btn {
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 5px 15px;
+    transition: all 0.3s;
+    margin-bottom: 8px; /* Add margin to create space between buttons */
+  }
+  
+  .ant-btn-primary {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    color: white;
+  }
+  
+  .ant-btn-primary:hover {
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+    color: white;
+  }
+  
+  .ant-btn-danger {
+    background-color: #ff4d4f;
+    border-color: #ff4d4f;
+    color: white;
+  }
+  
+  .ant-btn-danger:hover {
+    background-color: #ff7875;
+    border-color: #ff7875;
+  }
+  
+  .ant-btn-default {
+    background-color: #e6f7ff;
+    border-color: #1890ff;
+    color: #1890ff;
+  }
+  
+  .ant-btn-default:hover {
+    background-color: #d6e4ff;
+    border-color: #1890ff;
+    color: #1890ff;
+  }
+  
+  .ant-btn-link {
+    color: #1890ff;
+    padding: 0;
+    border: none;
+  }
+  
+  .ant-btn-link:hover {
+    color: #40a9ff;
+  }
+  
+  /* Pagination styling */
+  .ant-pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  /* Modal styling */
+  .ant-modal {
+    border-radius: 8px;
+  }
+  
+  .ant-modal-header {
+    background-color: #001529;
+    color: white;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .ant-modal-title {
+    color: white;
+  }
+  
+  .ant-modal-body {
+    padding: 20px;
+    background-color: #f9fafb;
+  }
+  
+  .ant-modal-footer {
+    border-top: none;
+    background-color: #f9fafb;
+  }
+  
+  /* Typography styling */
+  .ant-typography {
+    color: #001529;
+  }
+  
+  .ant-typography a {
+    color: #1890ff;
+  }
+  
+  .ant-typography a:hover {
+    color: #40a9ff;
+  }
+  

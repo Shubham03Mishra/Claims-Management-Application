@@ -19,10 +19,11 @@ import {
   claimReject,
   ClaimResponse,
   Claim,
-} from "../utils/venueClaims";
-import { updateVenuOwner } from "../utils/venueClaims"; // Ensure you import the sendVenueData function
+  updateVenuOwner
+} from "../utils/venueAPI";
+import { fetchUserDetails } from "../utils/userAPI";
 
-const { Title, Text } = Typography;
+const { Title, Text, Link } = Typography;
 
 const ClaimManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -31,10 +32,12 @@ const ClaimManagement: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [cursor, setCursor] = useState<any>(null); // Change the type of cursor to any
+  const [cursor, setCursor] = useState<any>(null);
   const [nextEnable, setNextEnable] = useState<boolean>(false);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null); // For user details modal
+  const [userDetails, setUserDetails] = useState<any>(null);
   const pageSize = 5;
 
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -74,7 +77,6 @@ const ClaimManagement: React.FC = () => {
       const hasCursor = data.cursor !== undefined && data.cursor.l !== undefined;
       setCursor(hasCursor ? data.cursor : null);
       setNextEnable(hasCursor);
-      // Update totalItems based on nextEnable status
       setTotalItems(hasCursor ? page * pageSize + 1 : page * pageSize);
     } catch (error) {
       setError("Failed to fetch claims.");
@@ -125,8 +127,6 @@ const ClaimManagement: React.FC = () => {
       try {
         const claim = claims.find((claim) => claim.id === rejectingId);
         if (!claim) throw new Error("Claim not found");
-        console.log(rejectingId);
-        console.log(claim);
         const venue = claim.r.venue;
         venue.event_conf_req = 0;
         const response = await updateVenuOwner(venue);
@@ -149,6 +149,21 @@ const ClaimManagement: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleUserDetails = async (user: any) => {
+    try {
+      const response = await fetchUserDetails(user.user_doc_id);
+      setUserDetails(response["$@user_details_for_admin"]);
+      setSelectedUser(user);
+    } catch (error) {
+      message.error("Failed to fetch user details");
+    }
+  };
+
+  const handleUserDetailsClose = () => {
+    setSelectedUser(null);
+    setUserDetails(null);
   };
 
   return (
@@ -174,21 +189,11 @@ const ClaimManagement: React.FC = () => {
                     </Text>
                     <Text>
                       <p>
-                        <strong>Organizer:</strong> {item.r.user.first_name}{" "}
-                        {item.r.user.last_name}
-                      </p>
-                    </Text>
-                    <Text>
-                      <p>
-                        <strong>Email:</strong> {item.r.user.email}
-                      </p>
-                    </Text>
-                    <Text>
-                      <p>
                         <strong>Timestamp:</strong>{" "}
                         {new Date(item.r.timestamp * 1000).toLocaleString()}
                       </p>
                     </Text>
+                    <Link onClick={() => handleUserDetails(item.r.user)}>User Details</Link>
                   </div>
                   <div className={styles.actions}>
                     <Button
@@ -238,6 +243,25 @@ const ClaimManagement: React.FC = () => {
         onCancel={() => setRejectingId(null)}
       >
         <p>Are you sure you want to reject this claim?</p>
+      </Modal>
+      <Modal
+        title="User Details"
+        visible={!!selectedUser}
+        onCancel={handleUserDetailsClose}
+        footer={[
+          <Button key="close" onClick={handleUserDetailsClose}>
+            Close
+          </Button>
+        ]}
+      >
+        {userDetails && (
+          <div>
+            <p><strong>First Name:</strong> {userDetails.fn}</p>
+            <p><strong>Last Name:</strong> {userDetails.ln}</p>
+            <p><strong>Email:</strong> {userDetails.mail}</p>
+            <p><strong>Phone Number:</strong> {userDetails.phone}</p>
+          </div>
+        )}
       </Modal>
     </div>
   );

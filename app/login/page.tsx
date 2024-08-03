@@ -1,25 +1,29 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Form, Input, Button, message } from "antd";
-import {
-  EyeInvisibleOutlined,
-  EyeTwoTone,
-} from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import styles from "../styles/login.module.css";
-import { loginUser } from "../utils/useUserAuth";
+import { loginUser } from "../utils/userAPI";
+import { useRouter } from "next/navigation";  // Updated import for Next.js 13+
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const router = useRouter();  // Initialize the router
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const onFinish = async (values: { userId: string; password: string }) => {
+    if (values.userId !== "root") {
+      message.error("Access denied. Only root user can login.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await loginUser({ uid: values.userId, pwd: values.password });
       if (response && response.status === 200) {
         message.success("Login successful!");
-        router.push("/claim"); // Redirect to the dashboard or another page after successful login
+        setLoggedIn(true); // Set the loggedIn state to true upon successful login
+        router.push("/dashboard"); // Redirect to /dashboard
       } else {
         message.error("Login failed!");
       }
